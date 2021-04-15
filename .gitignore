@@ -1,0 +1,4 @@
+build/
+build/*
+cocos2d/
+cocos2d/*
