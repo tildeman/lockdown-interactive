@@ -12,12 +12,7 @@ Scene* Simulator::createScene(){
 	return Simulator::create();
 }
 
-bool Simulator::init(){
-	if ( !Scene::init() )
-	{
-		return false;
-	}
-
+void Simulator::loadan(){
 	int seed,i,inf_item;
 	FILE* f = fopen("rand_save", "r");
 	if (f == nullptr) {
@@ -57,6 +52,15 @@ bool Simulator::init(){
 	inf_item = rand() % count;
 	items[inf_item].state = 1;
 	items[inf_item].inf_period = rand() % max_inf_period + 1;
+}
+
+bool Simulator::init(){
+	if ( !Scene::init() )
+	{
+		return false;
+	}
+
+	this->loadan();
 
 	this->scheduleUpdate();
 

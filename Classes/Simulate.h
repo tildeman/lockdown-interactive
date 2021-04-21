@@ -23,6 +23,8 @@ public:
 
 	static cocos2d::Scene* createScene();
 
+	void loadan();
+
 	virtual bool init();
 
 	void update(float del);
