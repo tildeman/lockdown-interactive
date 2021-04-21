@@ -2,6 +2,7 @@
 #define _nhatminh_sim
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 #include <cstdio>
 
 class Simulator: public cocos2d::Scene
@@ -20,10 +21,14 @@ public:
 	int inf_rad = 5;
 	int inf_prob = 10;
 	int max_inf_period = 500;
+	float ball_radius = 5.75;
+	cocos2d::ui::Button* btn_reload;
 
 	static cocos2d::Scene* createScene();
 
 	void loadan();
+	void rmchild();
+	void loadrldbtn();
 
 	virtual bool init();
 

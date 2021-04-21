@@ -1,15 +1,42 @@
 #include "Simulate.h"
+#include "ui/CocosGUI.h"
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 
 double pi = 3.14159265;
-float ball_radius = 5.75;
 
 USING_NS_CC;
 
 Scene* Simulator::createScene(){
 	return Simulator::create();
+}
+
+void Simulator::rmchild(){
+	for (int i=0;i<this->count;i++) this->removeChild(items[i].sprite);
+}
+
+void Simulator::loadrldbtn(){
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	btn_reload =  cocos2d::ui::Button::create("btn.png","btn_click.png","btn_dis.png");
+	btn_reload->setTitleFontName("arial.ttf");
+	btn_reload->setTitleText("Reload configuration");
+	btn_reload->addTouchEventListener([&](Ref* s, ui::Widget::TouchEventType t){
+		switch(t){
+			case ui::Widget::TouchEventType::BEGAN:
+				break;
+			case ui::Widget::TouchEventType::ENDED:
+				this->rmchild();
+				this->loadan();
+				break;
+			default:
+				break;
+		}
+	});
+	btn_reload->setPosition(Vec2(visibleSize.width-80,visibleSize.height-30));
+	btn_reload->setTitleColor(Color3B(0,0,0));
+	btn_reload->setTitleFontSize(14);
+	this->addChild(btn_reload,1);
 }
 
 void Simulator::loadan(){
@@ -30,11 +57,11 @@ void Simulator::loadan(){
 	FILE* cnf = fopen("simulator_options.ini", "r");
 	if (cnf==nullptr){
 		FILE* cnf_w = fopen("simulator_options.ini", "w");
-		fprintf(cnf_w, "%d %d %d %d\nTo change the simulator options, the numbers above are:\n- Item count\n- Infection radius\n- Probability of infection\n- Maximum period of infection", Simulator::count, Simulator::inf_rad, Simulator::inf_prob, Simulator::max_inf_period);
+		fprintf(cnf_w, "%d %d %d %d %f\nTo change the simulator options, the numbers above are:\n- Item count\n- Infection radius\n- Probability of infection\n- Maximum period of infection\n- Size", Simulator::count, Simulator::inf_rad, Simulator::inf_prob, Simulator::max_inf_period, Simulator::ball_radius);
 		fclose(cnf_w);
 	}
 	else {
-		fscanf(cnf, "%d %d %d %d", &count, &inf_rad, &inf_prob, &max_inf_period);
+		fscanf(cnf, "%d %d %d %d %f", &count, &inf_rad, &inf_prob, &max_inf_period, &ball_radius);
 	}
 	if (count > 1000 || count <= 0) count = 500;
 
@@ -42,7 +69,7 @@ void Simulator::loadan(){
 
 	for (i = 0; i < count; i++) {
 		items[i].sprite = Sprite::create("ball-b.png");
-		items[i].sprite->setPosition(Vec2(rand() % int(visibleSize.width - (ball_radius * 2)) + ball_radius, rand() % int(visibleSize.height - (ball_radius * 2)) + ball_radius));
+		items[i].sprite->setPosition(Vec2(rand() % int(visibleSize.width - (this->ball_radius * 2)) + this->ball_radius, rand() % int(visibleSize.height - (this->ball_radius * 2)) + this->ball_radius));
 		items[i].sprite->setScale(0.25);
 		this->addChild(items[i].sprite);
 
@@ -61,6 +88,8 @@ bool Simulator::init(){
 	}
 
 	this->loadan();
+
+	this->loadrldbtn();
 
 	this->scheduleUpdate();
 
